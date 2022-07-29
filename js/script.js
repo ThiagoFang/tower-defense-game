@@ -69,19 +69,20 @@ const mouse = {
 }
 
 canvas.addEventListener('click', (event) => {
-    if(activeTile) {
+    if(activeTile && !activeTile.occupied) {
         buildings.push(new Building({
             position: {
                 x: activeTile.position.x,
                 y: activeTile.position.y
             }
         }));
-    }
+        activeTile.occupied = true;
+    };
 });
 
 window.addEventListener('mousemove', (event) => {
-    mouse.x = event.clientX - 64;
-    mouse.y = event.clientY - 64;
+    mouse.x = event.clientX;
+    mouse.y = event.clientY;
 
     activeTile = null;
     for (let i = 0; i < placementTile.length; i++) {

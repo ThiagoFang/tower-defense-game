@@ -48,11 +48,12 @@ class Enemy {
 
 
 //Placement Tile
-class PlacementTile {
+class PlacementTile { 
   constructor({ position = { x: 0, y: 0 } }) {
     this.position = position
     this.size = 64
     this.color = 'rgba(255, 255, 255, 0.15)'
+    this.occupied = false
   }
 
   draw() {
@@ -77,10 +78,11 @@ class PlacementTile {
 class Building {
   constructor({position = {x: 0, y: 0}}) {
     this.position = position
+    this.width = 64
   };
 
   draw() {
     context.fillStyle = 'blue'
-    context.fillRect(this.position.x, this.position.y, 64, 64)
+    context.fillRect(this.position.x, this.position.y, this.width * 2, 64)
   }
 }
