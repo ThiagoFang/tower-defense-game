@@ -54,12 +54,25 @@ spawnEnemies(spawnCount);
 const buildings = [];
 let activeTile = undefined;
 let hearths = 10;
+let coins = 100;
 
 const gameOver = (animationId) => {
     const gameOverText = document.querySelector('.game-over--txt');
     cancelAnimationFrame(animationId);
     gameOverText.style.display = 'flex';
 };
+
+const changeCoins = (value) => {
+    const coinsDiv = document.querySelector('.coins-info');
+    coins += value
+    coinsDiv.innerHTML = coins;
+}
+
+const updateHearths = (value) => {
+    const healthInfo = document.querySelector('.health-info');
+            hearths += value
+            healthInfo.innerHTML = hearths
+}
 
 const animate = () => {
     const animationId = requestAnimationFrame(animate);
@@ -69,7 +82,7 @@ const animate = () => {
         const enemy = enemies[i];
         enemy.update();
         if(enemy.position.x > canvas.width) {
-            hearths -= 1
+            updateHearths(-1)
             enemies.splice(i, 1);
             if(hearths === 0) gameOver(animationId);
         };
@@ -111,7 +124,10 @@ const animate = () => {
                     const enemyIndex = enemies.findIndex(enemy => {
                         return projectile.enemy === enemy
                     });
-                    if(enemyIndex > -1) enemies.splice(enemyIndex, 1);
+                    if(enemyIndex > -1) {
+                        enemies.splice(enemyIndex, 1);
+                        changeCoins(25);
+                    };
                 };
 
                 
@@ -127,7 +143,8 @@ const mouse = {
     y: undefined
 }
 canvas.addEventListener('click', (event) => {
-    if(activeTile && !activeTile.occupied) {
+    if(activeTile && !activeTile.occupied && coins - 50 >= 0) {
+        changeCoins(-50)
         buildings.push(new Building({
             position: {
                 x: activeTile.position.x,
