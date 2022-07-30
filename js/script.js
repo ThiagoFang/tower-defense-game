@@ -53,17 +53,38 @@ spawnEnemies(spawnCount);
 //Updating all the objects in the screen
 const buildings = [];
 let activeTile = undefined;
+let hearths = 10;
+
+const gameOver = (animationId) => {
+    const gameOverText = document.querySelector('.game-over--txt');
+    cancelAnimationFrame(animationId);
+    gameOverText.style.display = 'flex';
+};
+
 const animate = () => {
-    requestAnimationFrame(animate);
+    const animationId = requestAnimationFrame(animate);
     context.drawImage(image, 0, 0);
 
     for(let i = enemies.length - 1; i >= 0; i--) {
         const enemy = enemies[i];
         enemy.update();
+        if(enemy.position.x > canvas.width) {
+            hearths -= 1
+            enemies.splice(i, 1);
+            if(hearths === 0) gameOver(animationId);
+        };
     };
+
+    //Tracking total amount of enemies
+    if(enemies.length === 0) {
+        spawnCount += 2
+        spawnEnemies(spawnCount);
+    }
+
     placementTile.forEach(tile => {
         tile.update(mouse)
     });
+
     buildings.forEach(building => {
         building.update();
         building.target = null;
@@ -93,10 +114,7 @@ const animate = () => {
                     if(enemyIndex > -1) enemies.splice(enemyIndex, 1);
                 };
 
-                if(enemies.length === 0) {
-                    spawnCount += 2
-                    spawnEnemies(spawnCount);
-                }
+                
                 building.projectiles.splice(i, 1);
             };
         };
