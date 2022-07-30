@@ -60,12 +60,32 @@ const animate = () => {
         tile.update(mouse)
     });
     buildings.forEach(building => {
-        building.draw();
-        building.projectiles.forEach(projectile => {
-            projectile.draw();
+        building.update();
+        building.target = null;
+        const validEnemies = enemies.filter(enemy => {
+            const xDiference = enemy.center.x - building.center.x;
+            const yDiference = enemy.center.y - building.center.y;
+            const distance = Math.hypot(xDiference, yDiference);
+            return distance < enemy.radius + building.radius;
         });
-    })
+        building.target = validEnemies[0];
+
+        for(let i = building.projectiles.length - 1; i >= 0; i--) {
+            const projectile = building.projectiles[i];
+
+            projectile.update();
+
+            const xDiference = projectile.enemy.center.x - projectile.position.x;
+            const yDiference = projectile.enemy.center.y - projectile.position.y;
+
+            const distance = Math.hypot(xDiference, yDiference);
+            if (distance < projectile.enemy.radius + projectile.radius) {
+                building.projectiles.splice(i, 1);
+            };
+        };
+    });
 };
+
 const mouse = {
     x: undefined,
     y: undefined

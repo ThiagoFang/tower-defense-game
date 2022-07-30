@@ -9,16 +9,23 @@ class Enemy {
             x: this.position.x + this.width / 2,
             y: this.position.y + this.height / 2
         }
+        this.radius = 50
     };
 
     draw() {
         context.fillStyle = 'red';
+        
+        /*
         context.fillRect(
             this.position.x, 
             this.position.y, 
             this.width, 
             this.height
-        );
+        );*/
+        context.beginPath()
+        context.arc(this.center.x, this.center.y, this.radius, 0, Math.PI * 2)
+        context.fill()
+
     };
 
     update() {
@@ -75,38 +82,85 @@ class PlacementTile {
   }
 }
 
+//Tower Projectile
 class Projectile {
-  constructor({position = {x: 0, y: 0}}) {
+  constructor({position = {x: 0, y: 0}, enemy}) {
     this.position = position
     this.velocity = {
       x: 0,
       y: 0
     }
+    this.enemy = enemy
+    this.radius = 10
   }
 
   draw() {
     context.beginPath()
-    context.arc(this.position.x, this.position.y, 10, 0, Math.PI * 2)
+    context.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2)
     context.fillStyle = 'orange'
     context.fill()
   }
+
+  update() {
+    this.draw()
+
+    const angle = Math.atan2(
+      this.enemy.center.y - this.position.y,
+      this.enemy.center.x - this.position.x
+    )
+
+    const projectileVelocity = 4
+    this.velocity.x = Math.cos(angle) * projectileVelocity
+    this.velocity.y = Math.sin(angle) * projectileVelocity
+
+    this.position.x += this.velocity.x
+    this.position.y += this.velocity.y
+  }
 }
 
+
+//Tower
 class Building {
   constructor({position = {x: 0, y: 0}}) {
     this.position = position
-    this.width = 64
-    this.projectiles = [
-      new Projectile({
-        position: {
-          x: this.position.x,
-          y: this.position.y
-        }
-      })
-    ]
-  };
+    this.width = 64 * 2
+    this.height = 64
+    this.center = {
+      x: this.position.x + this.width / 2,
+      y: this.position.y + this.height / 2
+    }
+    this.projectiles = []
+    this.radius = 250
+    this.target
+    this.frames = 0
+  }
+
   draw() {
     context.fillStyle = 'blue'
-    context.fillRect(this.position.x, this.position.y, this.width * 2, 64)
+    context.fillRect(this.position.x, this.position.y, this.width, 64)
+
+    context.beginPath()
+    context.arc(this.center.x, this.center.y, this.radius, 0, Math.PI * 2)
+    context.fillStyle = 'rgba(0, 0, 255, 0.2)'
+    context.fill()
+  }
+
+  update() {
+    this.draw()
+
+    if(this.frames % 100 === 0 && this.target) {
+      this.projectiles.push(
+        this.projectiles = [
+          new Projectile({
+            position: {
+              x: this.center.x,
+              y: this.center.y
+            },
+            enemy: this.target
+          })
+        ]
+      )
+    }
+    this.frames++
   }
 }
