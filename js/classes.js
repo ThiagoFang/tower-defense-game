@@ -110,7 +110,7 @@ class Projectile {
       this.enemy.center.x - this.position.x
     )
 
-    const projectileVelocity = 4
+    const projectileVelocity = 5
     this.velocity.x = Math.cos(angle) * projectileVelocity
     this.velocity.y = Math.sin(angle) * projectileVelocity
 

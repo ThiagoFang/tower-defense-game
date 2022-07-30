@@ -9,11 +9,11 @@ context.fillStyle = 'white';
 context.fillRect(0, 0, canvas.width, canvas.height);
 
 const placementeTilesData2D = [];
+const placementTile = [];
+
 for (let i = 0; i < placementeTilesData.length; i += 20){
     placementeTilesData2D.push(placementeTilesData.slice(i, i + 20));
 };
-
-const placementTile = [];
 
 placementeTilesData2D.forEach((row, y) => {
     row.forEach((symbol, x) => {
@@ -30,25 +30,29 @@ placementeTilesData2D.forEach((row, y) => {
     });
 });
 
-// Draw
+// Load Background
 const image = new Image('./assets/gameMap.png');
 image.onload = () => {
     animate();
 };
 image.src = ('./assets/gameMap.png');
 
+//Creating Enemies
 const enemies = []
-
-for (let i = 1; i <= 10; i++) {
-    const xOffset = i * 150
-    enemies.push(new Enemy({ 
-        position: {x: waypoints[0].x - xOffset, y: waypoints[0].y} 
-    }));
+let spawnCount = 3
+const spawnEnemies = (spawnCount) => {
+    for (let i = 1; i < spawnCount + 1; i++) {
+        const xOffset = i * 150
+        enemies.push(new Enemy({ 
+            position: {x: waypoints[0].x - xOffset, y: waypoints[0].y} 
+        }));
+    };
 };
+spawnEnemies(spawnCount);
 
+//Updating all the objects in the screen
 const buildings = [];
 let activeTile = undefined;
-
 const animate = () => {
     requestAnimationFrame(animate);
     context.drawImage(image, 0, 0);
@@ -88,17 +92,22 @@ const animate = () => {
                     });
                     if(enemyIndex > -1) enemies.splice(enemyIndex, 1);
                 };
+
+                if(enemies.length === 0) {
+                    spawnCount += 2
+                    spawnEnemies(spawnCount);
+                }
                 building.projectiles.splice(i, 1);
             };
         };
     });
 };
 
+//Mouse Actions
 const mouse = {
     x: undefined,
     y: undefined
 }
-
 canvas.addEventListener('click', (event) => {
     if(activeTile && !activeTile.occupied) {
         buildings.push(new Building({
@@ -110,7 +119,6 @@ canvas.addEventListener('click', (event) => {
         activeTile.occupied = true;
     };
 });
-
 window.addEventListener('mousemove', (event) => {
     mouse.x = event.clientX;
     mouse.y = event.clientY;
@@ -129,5 +137,3 @@ window.addEventListener('mousemove', (event) => {
           };
     };
 });
-
-animate();
