@@ -152,6 +152,9 @@ canvas.addEventListener('click', (event) => {
             }
         }));
         activeTile.occupied = true;
+        buildings.sort((a, b) => {
+            return a.position.y - b.position.y;
+        });
     };
 });
 window.addEventListener('mousemove', (event) => {

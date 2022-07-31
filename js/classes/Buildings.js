@@ -1,6 +1,17 @@
-class Building {
+class Building extends Sprite {
     constructor({position = {x: 0, y: 0}}) {
-      this.position = position
+      super({
+        position,
+        imageSrc: './assets/tower.png',
+        frames: {
+          max: 19
+        },
+        offset: {
+          x: 0,
+          y: -80
+        }
+      })
+      
       this.width = 64 * 2
       this.height = 64
       this.center = {
@@ -10,35 +21,34 @@ class Building {
       this.projectiles = []
       this.radius = 250
       this.target
-      this.frames = 0
     }
   
     draw() {
-      context.fillStyle = 'blue'
-      context.fillRect(this.position.x, this.position.y, this.width, 64)
+      super.draw()
   
-      context.beginPath()
-      context.arc(this.center.x, this.center.y, this.radius, 0, Math.PI * 2)
-      context.fillStyle = 'rgba(0, 0, 255, 0.2)'
-      context.fill()
+      //context.beginPath()
+      //context.arc(this.center.x, this.center.y, this.radius, 0, Math.PI * 2)
+      //context.fillStyle = 'rgba(255, 255, 255, 0.02)'
+      //context.fill()
     }
   
     update() {
       this.draw()
-  
-      if(this.frames % 100 === 0 && this.target) {
-        this.projectiles.push(
-          this.projectiles = [
-            new Projectile({
-              position: {
-                x: this.center.x,
-                y: this.center.y
-              },
-              enemy: this.target
-            })
-          ]
-        )
-      }
-      this.frames++
+      if(this.target || !this.target && this.frames.current !== 0) super.update()     
+      if (this.target && this.frames.current === 6 && this.frames.elapsed % this.frames.hold === 0) this.shoot()
+    }
+
+    shoot() {
+      this.projectiles.push(
+        this.projectiles = [
+          new Projectile({
+            position: {
+              x: this.center.x - 20,
+              y: this.center.y - 110
+            },
+            enemy: this.target
+          })
+        ]
+      )
     }
   }
