@@ -55,6 +55,7 @@ const buildings = [];
 let activeTile = undefined;
 let hearths = 10;
 let coins = 100;
+const explosions = [];
 
 const gameOver = (animationId) => {
     const gameOverText = document.querySelector('.game-over--txt');
@@ -87,6 +88,16 @@ const animate = () => {
             if(hearths === 0) gameOver(animationId);
         };
     };
+
+    for(let i = explosions.length - 1; i >= 0; i--) {
+        const explosion = explosions[i]
+        explosion.draw()
+        explosion.update()
+
+        if(explosion.frames.current >= explosion.frames.max - 1) {
+            explosions.splice(i, 1)
+        }
+    }
 
     //Tracking total amount of enemies
     if(enemies.length === 0) {
@@ -129,8 +140,15 @@ const animate = () => {
                         changeCoins(25);
                     };
                 };
-
-                
+                explosions.push(new Sprite({
+                    position: { 
+                        x: projectile.position.x, 
+                        y: projectile.position.y 
+                    },
+                    imageSrc: './assets/explosion.png',
+                    frames: {max: 4},
+                    offset: {x:0, y:0}
+                }));
                 building.projectiles.splice(i, 1);
             };
         };
