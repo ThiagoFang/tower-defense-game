@@ -130,7 +130,7 @@ const animate = () => {
 
             //this is when a projectile hits an enemy
             if (distance < projectile.enemy.radius + projectile.radius) {
-                projectile.enemy.health -= 20;
+                projectile.enemy.health -= 25;
                 if(projectile.enemy.health <= 0) {
                     const enemyIndex = enemies.findIndex(enemy => {
                         return projectile.enemy === enemy
